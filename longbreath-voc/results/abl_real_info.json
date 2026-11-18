@@ -1,0 +1,1 @@
+{"HTAN-noIIPE": {"params": 2222339, "epochs": [18, 15, 18, 20, 22]}, "HTAN-noBiLSTM": {"params": 928451, "epochs": [14, 13, 15, 12, 22]}, "HTAN-noCross": {"params": 1330883, "epochs": [18, 15, 16, 15, 14]}}

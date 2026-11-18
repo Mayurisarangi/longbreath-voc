@@ -1,0 +1,81 @@
+# LongBreath-Net / LongTraj-VOC
+
+Code for an **in silico feasibility and benchmarking study** study of longitudinal exhaled-breath VOC trajectory modelling for detecting
+pre-malignant metabolic drift in lung cancer.
+
+> **Important:** all data are *simulated*. Results are properties of the simulator and its assumed effect sizes. They are **not** evidence of clinical
+> early-detection performance. No patient data are included or were used.
+
+## What is here
+
+| Path | Purpose |
+|---|---|
+| `src/sim.py` | LongTraj-VOC simulator: idealised and realistic scenarios (N = 1,200; 5 visits at 0–24 months; 10 VOCs) |
+| `src/prep.py` | Confounder correction (fitted on training subjects only), imputation, mixed-effects utilities, feature construction |
+| `src/models.py` | LSTM, DLSTM, GRU-D, Temporal Transformer, HTAN (≈2.2 M parameters), HTAN-small (≈40 k) and ablation variants |
+| `src/analyze.py` | Macro AUC / sensitivity / specificity / F1, PMP-vs-HC AUC, lead time, 1,000-resample bootstrap 95 % CIs |
+| `scripts/run.py` | 5-fold stratified CV for one scenario and model set |
+| `scripts/misc.py`, `figs_large.py`, `fig7L.py` | Imputation diagnostics and manuscript figures |
+| `scripts/run_all.ps1` / `run_all.sh` | Reproduce every table and figure |
+| `results/*_metrics.json` | Numbers reported in the manuscript |
+| `docs/figures/` | Final manuscript figures |
+| `tests/` | Smoke tests (simulator shape/missingness/seed, model sizes) |
+
+Models compared: PLS-DA, SVM + mRMR (cross-sectional); two-stage linear mixed-effects model (LMM) and FPCA + logistic regression
+(statistical longitudinal); LSTM, DLSTM, GRU-D, Temporal Transformer, HTAN, HTAN-small (deep longitudinal).
+
+## Headline results (macro one-vs-rest AUC, 95 % bootstrap CI)
+
+| Model | Idealised scenario | Realistic scenario |
+|---|---|---|
+| PLS-DA | 0.887 (0.877–0.897) | 0.775 (0.759–0.789) |
+| SVM | 0.974 (0.967–0.980) | 0.756 (0.737–0.775) |
+| LMM | 0.996 (0.994–0.998) | 0.844 (0.828–0.859) |
+| FPCA | 0.995 (0.993–0.997) | 0.840 (0.824–0.855) |
+| LSTM | 0.996 (0.995–0.998) | 0.807 (0.788–0.823) |
+| DLSTM | 0.996 (0.994–0.998) | 0.807 (0.789–0.825) |
+| GRU-D | 0.995 (0.993–0.997) | 0.826 (0.811–0.841) |
+| TT | 0.996 (0.995–0.998) | 0.800 (0.783–0.817) |
+| HTAN-small | 0.995 (0.992–0.997) | 0.765 (0.749–0.780) |
+| HTAN | 0.996 (0.994–0.998) | 0.763 (0.746–0.779) |
+
+In the idealised scenario every longitudinal model saturates, so it cannot separate methods. Under realistic noise the two-stage
+mixed-effects model outperforms HTAN, i.e. the deep architecture is not justified by these data. See the manuscript for the full analysis,
+including imputation, leakage and effect-size sensitivity.
+
+## Installation
+
+Python 3.10–3.12. Use a virtual environment (avoids permission problems with a system-wide Python):
+
+```powershell
+# Windows PowerShell
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install -r requirements.txt
+```
+
+```bash
+# Linux / macOS
+python3 -m venv .venv && source .venv/bin/activate
+python -m pip install -r requirements.txt
+```
+
+## Usage
+
+Run all commands from the repository root.
+
+```bash
+python scripts/run.py --scenario ideal --out ideal                    # idealised benchmark
+python scripts/run.py --scenario real --effect 0.5 --out real         # realistic benchmark
+python src/analyze.py ideal real                                      # metrics + bootstrap CIs -> results/*_metrics.json
+python -m pytest -q tests                                             # quick checks
+```
+
+Reproduce everything (CPU, several hours): `scripts/run_all.ps1` (Windows) or `bash scripts/run_all.sh`.
+Seeds are fixed (data seed 0). Large prediction files (`.npz`) and model weights (`.pt`) are regenerated and are git-ignored.
+
+## Notes and limitations
+
+- Deep models use fixed, untuned hyper-parameters; confidence intervals reflect one simulated cohort, not data-generation or training-seed variability.
+- The mixed-effects baseline is a two-stage surrogate, not a full joint longitudinal–survival model.
+- Simulated visits lie on an exact 6-month grid, so irregular visit timing (the motivation for IIPE) is not exercised.

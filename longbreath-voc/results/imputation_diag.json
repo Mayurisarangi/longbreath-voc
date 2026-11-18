@@ -1,0 +1,36 @@
+{
+ "ideal": {
+  "ffill": {
+   "rmse_missing": 0.4380697073157977,
+   "pct_zero_delta_at_missing": 100.0,
+   "cum_drift_recovered_pct": 91.78996016163673
+  },
+  "linear": {
+   "rmse_missing": 0.29717035730147234,
+   "pct_zero_delta_at_missing": 27.827298050139277,
+   "cum_drift_recovered_pct": 91.78996016163673
+  },
+  "lmm": {
+   "rmse_missing": 0.24439791375587921,
+   "pct_zero_delta_at_missing": 0.0,
+   "cum_drift_recovered_pct": 99.91521557402358
+  }
+ },
+ "real": {
+  "ffill": {
+   "rmse_missing": 1.03829092295296,
+   "pct_zero_delta_at_missing": 100.0,
+   "cum_drift_recovered_pct": 96.15409976729985
+  },
+  "linear": {
+   "rmse_missing": 0.93316496406757,
+   "pct_zero_delta_at_missing": 29.388020833333332,
+   "cum_drift_recovered_pct": 96.15409976729985
+  },
+  "lmm": {
+   "rmse_missing": 0.7982242656309768,
+   "pct_zero_delta_at_missing": 0.0,
+   "cum_drift_recovered_pct": 91.22951115661836
+  }
+ }
+}

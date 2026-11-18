@@ -1,0 +1,17 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+# Large / regenerable outputs
+results/*.npz
+results/*.pt
+figs/
+logs_*.txt
+*.log
+# Editors / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
